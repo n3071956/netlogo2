@@ -1,9 +1,72 @@
 extensions [ table sock2 ]
+
+
+;------------------------------------
+; globals
+;------------------------------------
+
+globals
+[
+
+]
+
+;------------------------------------
+; startup & setup
+;------------------------------------
+
+
+to startup
+  ;globals.setup
+  ;world.set-size
+  setup
+end
+
+
+to setup
+  clear-all
+  ;globals.setup
+  ;patches.setup
+ ;; rail.setup
+  reset-ticks
+end
+
+;------------------------------------
+; patches
+;------------------------------------
+
+
+;======================================================
+; CMD-STACK manipulation
+;======================================================
+
+
+
+;------------------------------------
+; world control
+;------------------------------------
+
+
+;------------------------------------
+; top level commands & execution
+;------------------------------------
+
+;__ the repl _______________
+
+to exec.repl
+  let cmd-str sock2:read
+  output-print (word "received: " cmd-str)
+  run cmd-str
+  tick
+end
+
+;------------------------------------
+; utils
+;------------------------------------
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+6
 10
-649
+445
 470
 16
 16
@@ -28,12 +91,121 @@ ticks
 30.0
 
 BUTTON
-5
+837
 10
-80
+912
 43
 connect
-print (word \"connecting on 2222\")\nsock2:connect-local 2222\nprint \"socket connected\"
+print (word \"connecting on \" 2222)\nsock2:connect-local 2222\nprint \"socket connected\"
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+OUTPUT
+449
+10
+833
+469
+15
+
+BUTTON
+21
+476
+93
+509
+NIL
+startup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+95
+476
+158
+509
+NIL
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+577
+474
+663
+507
+startREPL
+exec.repl
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+844
+356
+930
+389
+quick-test
+q
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+845
+397
+922
+430
+find-key
+NIL
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+845
+436
+938
+469
+get-caught
+g
 NIL
 1
 T
