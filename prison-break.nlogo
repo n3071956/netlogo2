@@ -26,13 +26,13 @@ to setup
   clear-all
   ;globals.setup
   ;patches.setup
- ;; rail.setup
   reset-ticks
 end
 
 ;------------------------------------
-; patches
+; world
 ;------------------------------------
+
 
 
 ;======================================================
@@ -149,10 +149,10 @@ NIL
 1
 
 BUTTON
-577
-474
-663
-507
+160
+476
+246
+509
 startREPL
 exec.repl
 T
