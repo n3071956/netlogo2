@@ -10,6 +10,13 @@ globals
 
 ]
 
+breed [ prisoners prisoner ]
+breed [ guards guard ]
+
+patches-own [ name ]
+prisoners-own [ has-key ]
+guards-own [ has-key ]
+
 ;------------------------------------
 ; startup & setup
 ;------------------------------------
@@ -24,6 +31,8 @@ end
 
 to setup
   clear-all
+  setup-world
+  setup-prisoner
   ;globals.setup
   ;patches.setup
   reset-ticks
@@ -33,6 +42,79 @@ end
 ; world
 ;------------------------------------
 
+to setup-world
+
+  ask patches [ set pcolor black ]
+
+  ask patches with [ pxcor = -5 and pycor = 5 ] [ set-junction "j7" "j7 / exit" ]
+
+  ask patches with [ pxcor = -1 and pycor = 5 ] [ set-junction "j2" "j2" ]
+
+  ask patches with [ pxcor = -5 and pycor = 1 ] [ set-junction "j1" "j1" ]
+
+  ask patches with [ pxcor = -1 and pycor = 1 ] [ set-junction "j3" "j3" ]
+
+  ask patches with [ pxcor = 3 and pycor = 1 ] [ set-junction "j4" "j4" ]
+
+  ask patches with [ pxcor = -1 and pycor = -3 ] [ set-junction "j5" "j5" ]
+
+  ask patches with [ pxcor = 3 and pycor = -3 ] [ set-junction "j6" "j6" ]
+
+  ask patches with [ pxcor = 3 and pycor = -4 ] [
+    set-junction "c" "c"
+    set pcolor red
+  ]
+
+end
+
+to set-junction [ patch-name patch-label ]
+  set name patch-name
+  set pcolor grey
+  set plabel patch-label
+end
+
+to setup-prisoner
+  create-prisoners 1
+  [
+    set color blue
+    set xcor 3
+    set ycor -4
+    face one-of patches with [ name = "j6" ]
+    set shape "person"
+  ]
+end
+
+to move-to-junction [ patch-name ]
+  ask prisoners
+  [
+    face one-of patches with [ name = patch-name ]
+
+    if (not any? patches in-radius 0.2 with [ name = patch-name ])
+    [
+      forward 0.2
+      wait 0.05
+      move-to-junction patch-name
+    ]
+  ]
+end
+
+to unlock-cell
+  ask patches with [ name = "c" ]
+  [
+    set pcolor green
+  ]
+end
+
+to get-key
+  ask prisoners
+  [
+    set color green
+  ]
+end
+
+to exit
+  stop
+end
 
 
 ;======================================================
@@ -66,11 +148,11 @@ end
 GRAPHICS-WINDOW
 6
 10
-445
-470
-16
-16
-13.0
+406
+431
+6
+6
+30.0
 1
 10
 1
@@ -80,10 +162,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-6
+6
+-6
+6
 0
 0
 1
