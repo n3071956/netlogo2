@@ -33,6 +33,7 @@ to setup
   clear-all
   setup-world
   setup-prisoner
+  setup-guards
   ;globals.setup
   ;patches.setup
   reset-ticks
@@ -77,9 +78,26 @@ to setup-prisoner
   create-prisoners 1
   [
     set color blue
-    set xcor 3
-    set ycor -4
+    setxy 3 -4
     face one-of patches with [ name = "j6" ]
+    set shape "person"
+  ]
+end
+
+to setup-guards
+  create-guards 1
+  [
+    set color turquoise
+    setxy -5 1
+    face one-of patches with [ name = "j3" ]
+    set shape "person"
+  ]
+
+  create-guards 1
+  [
+    set color turquoise
+    setxy 3 1
+    face one-of patches with [ name = "j3" ]
     set shape "person"
   ]
 end
@@ -89,11 +107,10 @@ to move-to-junction [ patch-name ]
   [
     face one-of patches with [ name = patch-name ]
 
-    if (not any? patches in-radius 0.2 with [ name = patch-name ])
+    while [not any? patches in-radius 0.1 with [ name = patch-name ]]
     [
-      forward 0.2
+      forward 0.1
       wait 0.05
-      move-to-junction patch-name
     ]
   ]
 end
