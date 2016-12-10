@@ -149,6 +149,15 @@ end
 ; top level commands & execution
 ;------------------------------------
 
+;------------------------------------
+; block factories - cmd stuff - im guessing this is right
+;------------------------------------
+
+;this is the first one for planner - cell-unlocked
+to exec.cell-unlocked []
+
+end
+
 ;__ the repl _______________
 
 to exec.repl
