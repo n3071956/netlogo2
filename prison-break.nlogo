@@ -7,7 +7,8 @@ extensions [ table sock2 ]
 
 globals
 [
-
+  cmd-stack
+  cmd-rules
 ]
 
 breed [ prisoners prisoner ]
@@ -61,6 +62,28 @@ to setup-world
 
   ask patches with [ pxcor = 3 and pycor = -3 ] [ set-junction "j6" "j6" ]
 
+  ask patches with [ pcolor = grey ]
+  [
+    let patch-heading 0
+    loop
+    [
+      if ( patch-heading = 360 )
+      [
+        stop
+      ]
+      if ( [ pcolor ] of patch-at-heading-and-distance patch-heading 4 = grey )
+      [
+        let patch-count 1
+        while [ patch-count < 4 ]
+        [
+          ask patch-at-heading-and-distance patch-heading patch-count [ set pcolor white ]
+          set patch-count ( patch-count + 1 )
+        ]
+      ]
+      set patch-heading ( patch-heading + 90 )
+    ]
+  ]
+
   ask patches with [ pxcor = 3 and pycor = -4 ] [
     set-junction "c" "c"
     set pcolor red
@@ -102,12 +125,12 @@ to setup-guards
   ]
 end
 
-to move-to-junction [ patch-name ]
+to exec.move-to-junction [ patch-name ]
   ask prisoners
   [
     face one-of patches with [ name = patch-name ]
 
-    while [not any? patches in-radius 0.1 with [ name = patch-name ]]
+    while [ not any? patches in-radius 0.1 with [ name = patch-name ] ]
     [
       forward 0.1
       wait 0.05
@@ -115,21 +138,21 @@ to move-to-junction [ patch-name ]
   ]
 end
 
-to unlock-cell
+to exec.unlock-cell
   ask patches with [ name = "c" ]
   [
     set pcolor green
   ]
 end
 
-to get-key
+to exec.get-key
   ask prisoners
   [
     set color green
   ]
 end
 
-to exit
+to exec.exit
   stop
 end
 
@@ -138,7 +161,53 @@ end
 ; CMD-STACK manipulation
 ;======================================================
 
+;======================================================
+; CMD-STACK manipulation
+;======================================================
 
+
+to-report cmd-stack.pop
+  let #dat (first cmd-stack)
+  set cmd-stack (but-first cmd-stack)
+  report #dat
+end
+
+
+to cmd-stack.push [#dat]
+  set cmd-stack (word #dat cmd-stack)
+end
+
+
+to cmd-stack.queue [#dat]
+  set cmd-stack (word cmd-stack #dat)
+end
+
+
+to cmd-stack.run
+  while [not empty? cmd-stack]
+  [ cmd-stack.run1 ]
+end
+
+
+to cmd-stack.run1
+  let #m cmd-stack.pop
+  ; print (word #m " => " cmd-stack)
+  ifelse (table:has-key? cmd-rules #m)
+  [ run (table:get cmd-rules #m)  ]
+  [ ;; unknown command in use
+    print (word "unknown command: " #m)
+  ]
+  tick
+end
+
+
+to-report gen [#str #n]
+  ; print (list "gen:" #str #n)
+  set #n (int #n)
+  ifelse (#n = 0)
+  [ report "" ]
+  [ report reduce word n-values #n [#str] ]
+end
 
 ;------------------------------------
 ; world control
@@ -279,7 +348,7 @@ BUTTON
 930
 389
 quick-test
-q
+setup\nunlock-cell\nmove-to-junction \"j6\"\nmove-to-junction \"j5\"\nmove-to-junction \"j3\"\nmove-to-junction \"j2\"\nmove-to-junction \"j7\"\nmove-to-junction \"j1\"\nget-key\nmove-to-junction \"j7\"\nexit
 NIL
 1
 T
