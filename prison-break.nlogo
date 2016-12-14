@@ -126,6 +126,7 @@ to setup-guards
 end
 
 to exec.move-to-junction [ patch-name ]
+  print (word patch-name)
   ask prisoners
   [
     face one-of patches with [ name = patch-name ]
@@ -218,27 +219,44 @@ end
 ; top level commands & execution
 ;------------------------------------
 
-;------------------------------------
-; block factories - cmd stuff - im guessing this is right
-;------------------------------------
-
-;this is the first one for planner - cell-unlocked
-to exec.cell-unlocked []
-
+to connect
+  print (word "connecting on " port-num)
+  sock2:connect-local port-num
+  print "socket connected"
 end
-
-;__ the repl _______________
 
 to exec.repl
   let cmd-str sock2:read
-  output-print (word "received: " cmd-str)
+  output-print (word "input:  " cmd-str)
   run cmd-str
   tick
+end
+
+to flush-io
+  let cmd-str sock2:read
+  output-print (word "flush:  " cmd-str)
+  if (cmd-str = "stop") [stop]
+  tick
+end
+
+to send
+  output-print (word "output: " cmd-string)
+  sock2:write cmd-string
+end
+
+to nil
+
 end
 
 ;------------------------------------
 ; utils
 ;------------------------------------
+
+
+to assert [#x #str]
+  if not #x
+  [ error (word "assert fails: " #str) ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 6
@@ -268,51 +286,10 @@ ticks
 30.0
 
 BUTTON
-837
-10
-912
-43
-connect
-print (word \"connecting on \" 2222)\nsock2:connect-local 2222\nprint \"socket connected\"
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-OUTPUT
-449
-10
-833
-469
-15
-
-BUTTON
-21
-476
-93
-509
-NIL
-startup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-95
-476
-158
-509
+797
+160
+867
+193
 NIL
 setup
 NIL
@@ -325,12 +302,64 @@ NIL
 NIL
 1
 
+OUTPUT
+411
+10
+790
+366
+12
+
 BUTTON
-160
-476
-246
-509
-startREPL
+715
+16
+770
+49
+clear
+clear-output
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+INPUTBOX
+795
+10
+866
+70
+port-num
+2222
+1
+0
+Number
+
+BUTTON
+796
+72
+866
+105
+connect
+print (word \"connecting on \" port-num)\nsock2:connect-local port-num\nprint \"socket connected\"
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+797
+196
+868
+229
+start-repl
 exec.repl
 T
 1
@@ -343,10 +372,55 @@ NIL
 1
 
 BUTTON
-844
-356
-930
-389
+796
+109
+866
+142
+flush-io
+flush-io\nwait(1)
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+INPUTBOX
+414
+369
+733
+429
+cmd-string
+move
+1
+0
+String
+
+BUTTON
+731
+369
+790
+429
+send
+send
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+799
+370
+872
+403
 quick-test
 setup\nunlock-cell\nmove-to-junction \"j6\"\nmove-to-junction \"j5\"\nmove-to-junction \"j3\"\nmove-to-junction \"j2\"\nmove-to-junction \"j7\"\nmove-to-junction \"j1\"\nget-key\nmove-to-junction \"j7\"\nexit
 NIL
@@ -360,10 +434,10 @@ NIL
 1
 
 BUTTON
-845
-397
-922
-430
+799
+331
+873
+364
 find-key
 NIL
 NIL
@@ -377,12 +451,12 @@ NIL
 1
 
 BUTTON
-845
-436
-938
-469
-get-caught
-g
+799
+292
+871
+325
+quick-test
+setup\nunlock-cell\nmove-to-junction \"j6\"\nmove-to-junction \"j5\"\nmove-to-junction \"j3\"\nmove-to-junction \"j2\"\nmove-to-junction \"j7\"\nmove-to-junction \"j1\"\nget-key\nmove-to-junction \"j7\"\nexit
 NIL
 1
 T
