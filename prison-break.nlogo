@@ -456,7 +456,7 @@ BUTTON
 871
 325
 quick-test
-setup\nunlock-cell\nmove-to-junction \"j6\"\nmove-to-junction \"j5\"\nmove-to-junction \"j3\"\nmove-to-junction \"j2\"\nmove-to-junction \"j7\"\nmove-to-junction \"j1\"\nget-key\nmove-to-junction \"j7\"\nexit
+setup\nexec.unlock-cell\nexec.move-to-junction \"j6\"\nexec.move-to-junction \"j5\"\nexec.move-to-junction \"j3\"\nexec.move-to-junction \"j2\"\nexec.move-to-junction \"j7\"\nexec.move-to-junction \"j1\"\nexec.get-key\nexec.move-to-junction \"j7\"\nexec.exit
 NIL
 1
 T
